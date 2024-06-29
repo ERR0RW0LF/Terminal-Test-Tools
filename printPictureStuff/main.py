@@ -1,4 +1,6 @@
 from calendar import c
+from turtle import width
+from cv2 import resize
 import numpy as np
 from PIL import Image
 from rich.console import Console
@@ -19,7 +21,9 @@ class renderPicture():
         # if the y acis is odd, then it will add a row of zeros to make it even
         if self.image.size[1] % 2 != 0:
             self.addToPictureY(1)
+        print(self.image.shape)
         
+        self.resizePicture()
 
     def getPicture(self):
         return self.image
@@ -54,10 +58,10 @@ class renderPicture():
         self.image = self.image.astype(color)
     
     def addToPictureY(self, newYSize: int):
-        self.image = np.concatenate((self.image, np.zeros((newYSize, self.image.size[0], 3), dtype=np.uint8)), axis=0)
+        self.image = np.concatenate((self.image, np.zeros((newYSize, np.array(self.image).shape[1], 3), dtype=np.uint8)), axis=0)
     
     def addToPictureX(self, newXSize: int):
-        self.image = np.concatenate((self.image, np.zeros((self.image.size[1], newXSize, 3), dtype=np.uint8)), axis=1)
+        self.image = np.concatenate((self.image, np.zeros((np.array(self.image).shape[0], newXSize, 3), dtype=np.uint8)), axis=1)
     
     def addBorder(self, borderSize: int, color=(0,0,0)):
         self.image = np.pad(self.image, ((borderSize, borderSize), (borderSize, borderSize), (0,0)), mode='constant', constant_values=color)
@@ -66,8 +70,8 @@ class renderPicture():
         self.addToPictureY(y)
         self.addToPictureX(x)
     
-    def pictureSize(self):
-        return self.image.size
+    def pictureShape(self):
+        return self.image.shape
     
     def getPixel(self, x, y):
         return self.image[x][y]
@@ -77,20 +81,34 @@ class renderPicture():
     
     def pictureToASCII(self):
         ascii = ''
-        for y in range(len(self.image.size[1])):
-            for x in range(len(self.image.size[0])):
+        for y in range(np.array(self.image).shape[1]):
+            for x in range(np.array(self.image).shape[0]):
                 colorOne, colorTwo = self.getTwoPixels(x, y)
                 ascii += f'[rgb{colorOne} on rgb{colorTwo}]{symbol}[/]'
             ascii += '\n'
         return ascii
     
+    def resize_image(self, new_width):
+    widthPercent = (new_width / float(self.image.shape[0]))
+    new_height = int((float(self.image.size[1]) * float(width_percent)))
+    resized_image = self.image.resize((int(new_width), int(new_height)), Image.NEAREST)
+    return resized_image
     
+    def resizePicture(self):
+        hight = self.image.shape[1]
+        width = self.image.shape[0]
+        newWidth = (648)/hight * width
+        newHight = 648
+        self.image = resize(self.image, (newWidth, newHight))
 
 
 def main():
     console = Console()
     testImage = renderPicture('test.jpg')
+    print(testImage.image.shape)
     console.print(testImage.pictureToASCII())
 
 if __name__ == '__main__':
+    
+    
     main()
