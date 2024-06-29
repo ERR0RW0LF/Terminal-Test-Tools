@@ -54,10 +54,10 @@ class renderPicture():
         self.image = self.image.astype(color)
     
     def addToPictureY(self, newYSize: int):
-        self.image = np.concatenate((self.image, np.zeros((newYSize, self.image.shape[1], 3), dtype=np.uint8)), axis=0)
+        self.image = np.concatenate((self.image, np.zeros((newYSize, self.image.size[0], 3), dtype=np.uint8)), axis=0)
     
     def addToPictureX(self, newXSize: int):
-        self.image = np.concatenate((self.image, np.zeros((self.image.shape[0], newXSize, 3), dtype=np.uint8)), axis=1)
+        self.image = np.concatenate((self.image, np.zeros((self.image.size[1], newXSize, 3), dtype=np.uint8)), axis=1)
     
     def addBorder(self, borderSize: int, color=(0,0,0)):
         self.image = np.pad(self.image, ((borderSize, borderSize), (borderSize, borderSize), (0,0)), mode='constant', constant_values=color)
@@ -67,7 +67,7 @@ class renderPicture():
         self.addToPictureX(x)
     
     def pictureSize(self):
-        return self.image.shape
+        return self.image.size
     
     def getPixel(self, x, y):
         return self.image[x][y]
@@ -77,8 +77,8 @@ class renderPicture():
     
     def pictureToASCII(self):
         ascii = ''
-        for y in range(len(self.image.shape[1])):
-            for x in range(len(self.image.shape[0])):
+        for y in range(len(self.image.size[1])):
+            for x in range(len(self.image.size[0])):
                 colorOne, colorTwo = self.getTwoPixels(x, y)
                 ascii += f'[rgb{colorOne} on rgb{colorTwo}]{symbol}[/]'
             ascii += '\n'
