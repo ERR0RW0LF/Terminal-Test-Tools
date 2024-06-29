@@ -1,17 +1,25 @@
+from calendar import c
 import numpy as np
 from PIL import Image
+from rich.console import Console
+
+symbol = '▄'
 
 class renderPicture():
     def __init__(self, image):
         # if the last three letters are png, jpg, jpeg, or bmp, then it will open the image
         if (image[-3:] == 'jpg' or image[-4:] == 'jpeg' or image[-3:] == 'bmp'):
-            self.image = np.array(Image.open(image))
+            self.image = Image.open(image).convert('RGB')
         elif image[-3:] == 'png':
-            self.image = self.image[:,:,:3]
+            self.image = Image.open(image).convert('RGB')
         else:
             exit('The file is not a valid image file. Please try again.')
         
-        self.image = image
+        
+        # if the y acis is odd, then it will add a row of zeros to make it even
+        if self.image.size[1] % 2 != 0:
+            self.addToPictureY(1)
+        
 
     def getPicture(self):
         return self.image
@@ -58,4 +66,31 @@ class renderPicture():
         self.addToPictureY(y)
         self.addToPictureX(x)
     
+    def pictureSize(self):
+        return self.image.shape
     
+    def getPixel(self, x, y):
+        return self.image[x][y]
+    
+    def getTwoPixels(self, x, y):
+        return self.image[x][y], self.image[x][y+1]
+    
+    def pictureToASCII(self):
+        ascii = ''
+        for y in range(len(self.image.shape[1])):
+            for x in range(len(self.image.shape[0])):
+                colorOne, colorTwo = self.getTwoPixels(x, y)
+                ascii += f'[rgb{colorOne} on rgb{colorTwo}]{symbol}[/]'
+            ascii += '\n'
+        return ascii
+    
+    
+
+
+def main():
+    console = Console()
+    testImage = renderPicture('test.jpg')
+    console.print(testImage.pictureToASCII())
+
+if __name__ == '__main__':
+    main()
