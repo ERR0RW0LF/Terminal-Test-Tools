@@ -1,9 +1,9 @@
-from calendar import c
-from turtle import width
-from cv2 import resize
 import numpy as np
 from PIL import Image
+import sys
 from rich.console import Console
+from rich import print
+from rich.style import Style
 
 symbol = '▄'
 
@@ -17,11 +17,18 @@ class renderPicture():
         else:
             exit('The file is not a valid image file. Please try again.')
         
+        self.pixel_array = np.array(self.image)
+        
+        self.width = self.pixel_array.shape[1]
+        self.height = self.pixel_array.shape[0]
         
         # if the y acis is odd, then it will add a row of zeros to make it even
-        if self.image.size[1] % 2 != 0:
-            self.addToPictureY(1)
-        print(self.image.shape)
+        if self.height % 2 != 0:
+            # add a row of black pixels to make the height even at the bottom
+            self.pixel_array = np.vstack((self.pixel_array, np.zeros((1, self.width, 3), dtype=np.uint8)))
+            self.height += 1
+        
+        self.displayHeight = self.height / 2 # two pixels are represented by one symbol
         
         self.resizePicture()
 
@@ -87,24 +94,23 @@ class renderPicture():
                 ascii += f'[rgb{colorOne} on rgb{colorTwo}]{symbol}[/]'
             ascii += '\n'
         return ascii
-    
-    def resize_image(self, new_width):
-    widthPercent = (new_width / float(self.image.shape[0]))
-    new_height = int((float(self.image.size[1]) * float(width_percent)))
-    resized_image = self.image.resize((int(new_width), int(new_height)), Image.NEAREST)
+
+
+def resize_image(image:Image, new_width):
+    width_percent = (new_width / float(np.array(image).shape[0]))
+    new_height = int((float(np.array(image).shape[1]) * float(width_percent)))
+    resized_image = np.array(image).resize((int(new_width), int(new_height)), Image.NEAREST)
     return resized_image
     
-    def resizePicture(self):
-        hight = self.image.shape[1]
-        width = self.image.shape[0]
-        newWidth = (648)/hight * width
-        newHight = 648
-        self.image = resize(self.image, (newWidth, newHight))
-
 
 def main():
     console = Console()
-    testImage = renderPicture('test.jpg')
+    
+    image = 'test.jpg'
+    new_width = (2*648)/image.height * image.width
+    image = resize_image(image, new_width)
+    
+    testImage = renderPicture(image)
     print(testImage.image.shape)
     console.print(testImage.pictureToASCII())
 
