@@ -65,7 +65,7 @@ class PixelImage():
     
     def run(self):
         console = Console()
-        #console.clear()
+        console.clear()
         console.log(Panel(f"Image size: [red]{self.width}[/]x{self.height}"))
         picture = np.zeros((self.height, self.width), dtype=object)
         with Progress() as progress:
