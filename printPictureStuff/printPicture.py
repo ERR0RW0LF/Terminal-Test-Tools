@@ -86,8 +86,9 @@ class PixelImage():
                 #time.sleep(0.0001)
                 progress.update(task1, advance=1)
         #pprint.pprint(picture)
-        for y in range(self.height):
+        for y in range(0, self.height-2, 2):
             for x in range(self.width):
+                #console.log(f"y: {y} x: {x} style: {picture[y][x]}")
                 console.print(symbol, style=picture[y][x], end='')
             console.print()
 
