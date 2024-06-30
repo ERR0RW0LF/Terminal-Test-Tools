@@ -1,9 +1,12 @@
+import pprint
 import numpy as np
 from PIL import Image
 import sys
 from rich.console import Console
 from rich import print
 from rich.style import Style
+from rich.panel import Panel
+from rich.progress import Progress
 
 removeLine = '\033[F'
 moveUp = '\033[A'
@@ -63,17 +66,27 @@ class PixelImage():
     
     def run(self):
         console.clear()
-        #console.log(Panel(f"Image size: {self.width}x{self.height}"))
-        for y in range(0, self.height-2, 2):
-            for x in range(self.width):
-                upper_pixel, lower_pixel = self.get_symbol(x, y)
-                #print('uper_pixel:', upper_pixel, '  lower_pixel:', lower_pixel)
-                style = Style(color=f'rgb{lower_pixel}', bgcolor=f'rgb{upper_pixel}')
-                #print(style, end='')
-                console.print(symbol, style=style, end='')
-            console.print()
-            #time.sleep(0.0001)
-    console.print()
+        console.log(Panel(f"Image size: {self.width}x{self.height}"))
+        picture = ''
+        with Progress() as progress:
+            task1 = progress.add_task("[red]Rendering Picture...", total=self.displayHeight)
+            for y in range(0, self.height-2, 2):
+                for x in range(self.width):
+                    upper_pixel, lower_pixel = self.get_symbol(x, y)
+                    #print('uper_pixel:', upper_pixel, '  lower_pixel:', lower_pixel)
+                    style = f'rgb{lower_pixel} on rgb{upper_pixel}]'
+                    picture += '['+style + symbol + '[/'+style
+                    console.print('['+style + symbol + '[/'+style)
+                    #print(style + symbol + '[/]', end='')
+                    #print(style, end='')
+                    #console.print(symbol, style=style, end='')
+                picture += '\n'
+                #console.print()
+                #time.sleep(0.0001)
+                progress.update(task1, advance=1)
+        console.print(picture)
+        #pprint.pprint(picture)
+        console.print('[rgb(5, 46, 52) on rgb(5, 50, 56)]▄[/]')
 
 def main():
     if len(sys.argv) > 1:
