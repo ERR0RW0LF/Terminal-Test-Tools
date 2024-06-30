@@ -65,18 +65,19 @@ class PixelImage():
     
     
     def run(self):
-        console.clear()
-        console.log(Panel(f"Image size: {self.width}x{self.height}"))
+        console = Console()
+        #console.clear()
+        console.log(Panel(f"Image size: [red]{self.width}[/]x{self.height}"))
         picture = ''
         with Progress() as progress:
-            task1 = progress.add_task("[red]Rendering Picture...", total=self.displayHeight)
+            task1 = progress.add_task("[red]Rendering Picture...[/]", total=self.displayHeight)
             for y in range(0, self.height-2, 2):
                 for x in range(self.width):
                     upper_pixel, lower_pixel = self.get_symbol(x, y)
                     #print('uper_pixel:', upper_pixel, '  lower_pixel:', lower_pixel)
                     style = f'rgb{lower_pixel} on rgb{upper_pixel}]'
                     picture += '['+style + symbol + '[/'+style
-                    console.print('['+style + symbol + '[/'+style)
+                    #console.print('['+style + symbol + '[/'+style)
                     #print(style + symbol + '[/]', end='')
                     #print(style, end='')
                     #console.print(symbol, style=style, end='')
@@ -86,7 +87,7 @@ class PixelImage():
                 progress.update(task1, advance=1)
         console.print(picture)
         #pprint.pprint(picture)
-        console.print('[rgb(5, 46, 52) on rgb(5, 50, 56)]▄[/]')
+        console.print(Panel('[rgb(5, 46, 52) on rgb(5, 50, 56)]▄[/]'))
 
 def main():
     if len(sys.argv) > 1:
@@ -111,6 +112,9 @@ def main():
             image = resize_image(image, new_width)
             pixel_image = PixelImage(image)
             pixel_image.run()
+
+with Console() as console:
+    console.print('Hello, [rgb(5, 46, 52) rgb(5, 50, 56)]World![/]')
 
 if __name__ == '__main__':
     main()
