@@ -76,13 +76,28 @@ class PixelImage():
     console.print()
 
 def main():
-    image_path = 'bild.png'
-    image = get_image(image_path)
-    if image:
-        new_width = 100
-        image = resize_image(image, new_width)
-        pixel_image = PixelImage(image)
-        pixel_image.run()
+    if len(sys.argv) > 1:
+        image_paths = sys.argv[1:]
+        for image_path in image_paths:
+            image = get_image(image_path)
+            if image:
+                #print(np.array(image).shape)
+                if image.height % 2 != 0:
+                    # add a row of black pixels to make the height even at the bottom
+                    image = Image.fromarray(np.vstack((image, np.zeros((1, image.width, 3), dtype=np.uint8))))
+                #print(np.array(image).shape)
+                new_width = (2*648)/image.height * image.width
+                image = resize_image(image, new_width)
+                pixel_image = PixelImage(image)
+                pixel_image.run()
+    else:
+        image_path = 'bild.png'
+        image = get_image(image_path)
+        if image:
+            new_width = 100
+            image = resize_image(image, new_width)
+            pixel_image = PixelImage(image)
+            pixel_image.run()
 
 if __name__ == '__main__':
     main()
