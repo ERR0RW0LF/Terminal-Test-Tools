@@ -17,4 +17,4 @@ python3 /printPicture.py <path to picture>
 
 ## Output
 
-[2024-06-30_15-08.png](https://raw.githubusercontent.com/ERR0RW0LF/Terminal-Test-Tools/main/2024-06-30_15-08.png)
+![2024-06-30_15-08.png](https://raw.githubusercontent.com/ERR0RW0LF/Terminal-Test-Tools/main/2024-06-30_15-08.png)
