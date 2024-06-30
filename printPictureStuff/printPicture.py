@@ -11,3 +11,5 @@ moveDown = '\033[B'
 clearScreen = '\033[2J'
 
 console = Console()
+
+def main():
