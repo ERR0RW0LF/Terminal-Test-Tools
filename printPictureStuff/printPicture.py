@@ -12,4 +12,77 @@ clearScreen = '\033[2J'
 
 console = Console()
 
+def get_image(image_path):
+    try:
+        image = Image.open(image_path)
+        return image
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def resize_image(image, new_width):
+    print()
+    width_percent = (new_width / float(image.size[0]))
+    new_height = int((float(image.size[1]) * float(width_percent)))
+    resized_image = image.resize((int(new_width), int(new_height)), Image.NEAREST)
+    return resized_image
+
+# symbol that is used to represent two pixels above each other background is the higher pixel and foreground is the lower pixel
+symbol = '▄'
+
+def get_pixel_color(image:Image, x, y):
+    r, g, b = image.getpixel((x, y))
+    return r, g, b
+
+class PixelImage():
+    def __init__(self, image:Image):
+        self.image = image
+        self.pixel_array = np.array(image)
+        self.width = self.pixel_array.shape[1]
+        self.height = self.pixel_array.shape[0]
+        if self.height % 2 != 0:
+            # add a row of black pixels to make the height even at the bottom
+            self.pixel_array = np.vstack((self.pixel_array, np.zeros((1, self.width, 3), dtype=np.uint8)))
+            self.height += 1
+        self.displayHeight = self.height / 2 # two pixels are represented by one symbol
+        
+    
+    def get_pixel_color(self, x, y):
+        r, g, b = self.image.getpixel((x, y))
+        return r, g, b
+    
+    def get_symbol(self, x, y):
+        upper_pixel = self.get_pixel_color(x, y)
+        lower_pixel = self.get_pixel_color(x, y+1)
+        return upper_pixel, lower_pixel
+    
+    def color_style(self, upper_pixel, lower_pixel):
+        style = Style(bgcolor=upper_pixel, color=lower_pixel)
+        return style
+    
+    
+    def run(self):
+        console.clear()
+        #console.log(Panel(f"Image size: {self.width}x{self.height}"))
+        for y in range(0, self.height-2, 2):
+            for x in range(self.width):
+                upper_pixel, lower_pixel = self.get_symbol(x, y)
+                #print('uper_pixel:', upper_pixel, '  lower_pixel:', lower_pixel)
+                style = Style(color=f'rgb{lower_pixel}', bgcolor=f'rgb{upper_pixel}')
+                #print(style, end='')
+                console.print(symbol, style=style, end='')
+            console.print()
+            #time.sleep(0.0001)
+    console.print()
+
 def main():
+    image_path = 'bild.png'
+    image = get_image(image_path)
+    if image:
+        new_width = 100
+        image = resize_image(image, new_width)
+        pixel_image = PixelImage(image)
+        pixel_image.run()
+
+if __name__ == '__main__':
+    main()
