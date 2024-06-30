@@ -95,6 +95,14 @@ class renderPicture():
             ascii += '\n'
         return ascii
 
+def get_image(image_path):
+    try:
+        image = Image.open(image_path)
+        return image
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 
 def resize_image(image:Image, new_width):
     width_percent = (new_width / float(np.array(image).shape[0]))
@@ -105,11 +113,16 @@ def resize_image(image:Image, new_width):
 
 def main():
     console = Console()
-    
-    image = 'test.jpg'
-    new_width = (2*648)/image.height * image.width
-    image = resize_image(image, new_width)
-    
+    image_path = 'bild.png'
+    image = get_image(image_path)
+    if image:
+        #print(np.array(image).shape)
+        if image.height % 2 != 0:
+            # add a row of black pixels to make the height even at the bottom
+            image = Image.fromarray(np.vstack((image, np.zeros((1, image.width, 3), dtype=np.uint8))))
+        #print(np.array(image).shape)
+        new_width = (2*648)/image.height * image.width
+        image = resize_image(image, new_width)
     testImage = renderPicture(image)
     print(testImage.image.shape)
     console.print(testImage.pictureToASCII())
