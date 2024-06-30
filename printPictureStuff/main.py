@@ -128,6 +128,4 @@ def main():
     console.print(testImage.pictureToASCII())
 
 if __name__ == '__main__':
-    
-    
     main()
