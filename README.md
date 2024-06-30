@@ -17,4 +17,4 @@ python3 /printPicture.py <path to picture>
 
 ## Output
 
-(output)[2024-06-30_15-08.png]
+[output](2024-06-30_15-08.png)
