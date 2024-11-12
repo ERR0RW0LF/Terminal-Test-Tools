@@ -14,3 +14,6 @@ pip install -r requirements.txt
 ```bash
 python3 /printPicture.py <path to picture>
 ```
+
+## Output
+
